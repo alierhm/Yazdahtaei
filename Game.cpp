@@ -199,7 +199,7 @@ int Game::play(Player &player) {
                                            : "th");
         for (auto &card : match) {
           card.toString();
-          cout << " ";
+          cout << "   ";
         }
         cout << "\n\n";
         numOfMatch++;
@@ -283,7 +283,7 @@ void Game::calculateScores() {
     }
     m_players.at(indexOfMaxClubsCountPlayer).addScore(7);
   }
-  vector<Player> players_copy(m_players.size());
+  vector<Player> players_copy;
   for (auto &player : m_players) {
     players_copy.push_back(player);
   }
@@ -531,7 +531,7 @@ void Game::initializePlayers(string_view numberOfPlayers) {
 void Game::runTheMainPartOfTheGame() {
   while (true) {
     // play the game (game plays)
-    bool theGameMustBeContinued{false};
+    bool theGameMustBeContinued{true};
     int maximScore{0};
     for (auto &player : m_players) {
       if (player.getScore() > maximScore)
@@ -540,7 +540,7 @@ void Game::runTheMainPartOfTheGame() {
     if (maximScore >= 62 && m_repository.empty() && m_background.empty() &&
         allOfPlayersHaveNoCardsInTheirHands()) {
       if (m_numberOfPlayers == 2 || m_numberOfPlayers == 3) {
-        vector<int> scores(m_numberOfPlayers);
+        vector<int> scores;
         for (auto &player : m_players) {
           scores.push_back(player.getScore());
         }
@@ -554,6 +554,7 @@ void Game::runTheMainPartOfTheGame() {
         }
         if (!flag) {
           // the game must be over
+          theGameMustBeContinued = false;
         } else {
           theGameMustBeContinued = true; // the game must be continued
         }
@@ -562,7 +563,7 @@ void Game::runTheMainPartOfTheGame() {
         scoreOfTeam1 = m_players.at(0).getScore() + m_players.at(2).getScore();
         scoreOfTeam2 = m_players.at(1).getScore() + m_players.at(3).getScore();
         if (scoreOfTeam1 > scoreOfTeam2 || scoreOfTeam2 > scoreOfTeam1) {
-          // game must be over
+          theGameMustBeContinued = false;// game must be over
         } else {
           theGameMustBeContinued = true; // game must be continued
         }
@@ -596,6 +597,11 @@ void Game::runTheMainPartOfTheGame() {
         vector<Card> backgroundCardsAfterClearing(m_background.clear());
         m_players.at(m_idOfLastPlayerThatCollectedSomeCards - 1)
             .insertCollectedCards(backgroundCardsAfterClearing);
+        cout << format(
+            "\n{} was the last player who collected cards in this "
+            "round and because the background cards are not empty, "
+            "he/she collects them all.\n",
+            m_players.at(m_idOfLastPlayerThatCollectedSomeCards - 1).getName());
         calculateScores();
       } else if (m_repository.empty() && m_background.empty()) {
         calculateScores();
@@ -608,7 +614,7 @@ void Game::runTheMainPartOfTheGame() {
     }
     if (maxScore >= 62 && m_repository.empty() && m_background.empty()) {
       if (m_numberOfPlayers == 2 || m_numberOfPlayers == 3) {
-        vector<int> scores(m_numberOfPlayers);
+        vector<int> scores;
         for (auto &player : m_players) {
           scores.push_back(player.getScore());
         }
@@ -647,7 +653,7 @@ void Game::showScores() {
 }
 
 void Game::calculateRanks() {
-  vector<Player *> playersToRankByScore(m_players.size());
+  vector<Player *> playersToRankByScore;
   for (Player &player : m_players) {
     playersToRankByScore.push_back(&player);
   }
