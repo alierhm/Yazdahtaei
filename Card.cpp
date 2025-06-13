@@ -41,10 +41,11 @@ bool Card::operator!=(const Card &other) const {
 }
 
 void Card::toString() const {
-  cout << format("{} of {}\n",
+  cout << format("{} of {}",
                  (m_number == 11)   ? "Jack"
                  : (m_number == 12) ? "Queen"
                  : (m_number == 13) ? "King"
+                 : (m_number == 1)  ? "A"
                                     : format("{}", m_number),
                  string(m_suit));
 }
